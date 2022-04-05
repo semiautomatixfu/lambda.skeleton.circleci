@@ -1,47 +1,20 @@
-version: 2.1
 jobs:
-  build:
-    docker:
-      - image: cimg/node:14.19.1
-
-    working_directory: ~/repo
-
+  deploy:
+    executor: serverless/default
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
+      - aws-cli/setup
+      - serverless/setup:
+          app-name: serverless-framework-orb
+          org-name: circleci
       - run:
-          name: Install Serverless CLI and dependencies
-          command: |
-            HUSKY_SKIP_INSTALL=1 npm ci
-            sudo apt-get update
-            sudo apt-get install awscli
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-    
-
-      # run tests!
-      - run: 
-          name: Run linting
-          command: npm run lint:check -- -f checkstyle -o checkstyle-result.xml
-          # hudson.plugins.checkstyle.CheckStylePublisher
-
-      - run:
-          name: Run tests
-          command: JEST_JUNIT_OUTPUT=./jest-test-results.xml CI=true npm test -- --ci --reporters=default --reporters=jest-junit --coverage
-          # hudson.plugins.checkstyle.CheckStylePublisher
-
-      - run:
-          name: Build application
-          command: | 
-            chmod +x scripts/assume_dev.sh
-            source scripts/assume_dev.sh
-            npm run sls:package -- -v -s ${CIRCLE_BRANCH,,} --env dev
+          command: serverless package -v
+          name: package
+orbs:
+  aws-cli: circleci/aws-cli@2.1.0
+  serverless: circleci/serverless-framework@1.0.1
+version: 2.1
+workflows:
+  deploy:
+    jobs:
+      - deploy
