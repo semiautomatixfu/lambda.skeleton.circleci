@@ -3,7 +3,7 @@ jobs:
     executor: serverless/default
     steps:
       - checkout     
-      - aws-cli/setup:
+      - aws-cli/setup
       - serverless/setup:
           app-name: serverless-framework-orb
           org-name: circleci          
