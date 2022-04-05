@@ -4,12 +4,6 @@ jobs:
     steps:
       - aws-cli/setup:
           profile-name: default
-      # - aws-cli/role-arn-setup:
-      #     profile-name: dev-profile
-      #     role-arn: 'arn:aws:iam::841909260160:role/developer'
-      #     source-profile: default
-      # - run: >-
-      #     aws sts assume-role --role-arn "arn:aws:iam::841909260160:role/developer" --role-session-name AWSCLI-Session 
   package:
     executor: serverless/default
     steps:
@@ -42,7 +36,7 @@ jobs:
           command: JEST_JUNIT_OUTPUT=./jest-test-results.xml CI=true npm test -- --ci --reporters=default --reporters=jest-junit --coverage
           # hudson.plugins.checkstyle.CheckStylePublisher                  
       - run:
-          command: serverless package -v -s ${CIRCLE_BRANCH,,} --env dev
+          command: serverless package -v -s pre --env dev
           name: Package
 orbs:
   aws-cli: circleci/aws-cli@2.1.0
