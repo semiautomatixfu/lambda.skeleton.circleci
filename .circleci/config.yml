@@ -6,10 +6,36 @@ jobs:
       - aws-cli/setup
       - serverless/setup:
           app-name: serverless-framework-orb
-          org-name: circleci
+          org-name: circleci          
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
       - run:
-          command: serverless package -v
-          name: package
+          name: Install Serverless CLI and dependencies
+          command: |
+            HUSKY_SKIP_INSTALL=1 npm ci
+            sudo apt-get update
+            sudo apt-get install awscli
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-   
+
+      # run tests!
+      - run: 
+          name: Run linting
+          command: npm run lint:check -- -f checkstyle -o checkstyle-result.xml
+          # hudson.plugins.checkstyle.CheckStylePublisher
+      - run:
+          name: Run tests
+          command: JEST_JUNIT_OUTPUT=./jest-test-results.xml CI=true npm test -- --ci --reporters=default --reporters=jest-junit --coverage
+          # hudson.plugins.checkstyle.CheckStylePublisher                  
+      - run:
+          command: serverless package -v -s ${CIRCLE_BRANCH,,} --env dev
+          name: Package
 orbs:
   aws-cli: circleci/aws-cli@2.1.0
   serverless: circleci/serverless-framework@1.0.1
