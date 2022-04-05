@@ -1,9 +1,18 @@
 jobs:
-  deploy:
+  package:
     executor: serverless/default
     steps:
       - checkout
-      - aws-cli/setup
+      - aws-cli/setup:
+          profile-name: default
+      - aws-cli/role-arn-setup:
+          profile-name: dev-profile
+          role-arn: 'arn:aws:iam::841909260160:role/developer'
+          source-profile: default
+      - run: >-
+          aws sts assume-role --role-arn
+          "arn:aws:iam::841909260160:role/developer" --role-session-name
+          AWSCLI-Session      
       - serverless/setup:
           app-name: serverless-framework-orb
           org-name: circleci          
@@ -14,11 +23,9 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
       - run:
-          name: Install Serverless CLI and dependencies
+          name: Install dependencies
           command: |
             HUSKY_SKIP_INSTALL=1 npm ci
-            sudo apt-get update
-            sudo apt-get install awscli
       - save_cache:
           paths:
             - node_modules
@@ -41,6 +48,6 @@ orbs:
   serverless: circleci/serverless-framework@1.0.1
 version: 2.1
 workflows:
-  deploy:
+  package:
     jobs:
-      - deploy
+      - package
