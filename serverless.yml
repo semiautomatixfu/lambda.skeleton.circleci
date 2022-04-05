@@ -52,8 +52,6 @@ provider:
         - '*'
 
 custom:
-  bundle:
-    disableForkTsChecker: true
   webpack:
     includeModules:
       forceInclude:

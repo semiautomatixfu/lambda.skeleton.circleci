@@ -14,6 +14,9 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
       - run:
+          name: "What branch am I on now?"
+          command: echo ${CIRCLE_BRANCH,,}
+      - run:
           name: Install dependencies
           command: |
             HUSKY_SKIP_INSTALL=1 npm ci
@@ -32,7 +35,8 @@ jobs:
           command: JEST_JUNIT_OUTPUT=./jest-test-results.xml CI=true npm test -- --ci --reporters=default --reporters=jest-junit --coverage
           # hudson.plugins.checkstyle.CheckStylePublisher                  
       - run:
-          command: serverless package -v -s $CIRCLE_BRANCH --env dev
+          # todo: this should not use npx, perhaps orb is broken?
+          command: npx serverless package -v -s ${CIRCLE_BRANCH,,} --env dev
           name: Package
 orbs:
   aws-cli: circleci/aws-cli@2.1.0
