@@ -54,4 +54,6 @@ workflows:
   package:
     jobs:
       - configure-role-arn
-      - package
+      - package:
+          requires:
+            - configure-role-arn
