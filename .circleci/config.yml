@@ -20,6 +20,7 @@ jobs:
           name: Install Serverless CLI and dependencies
           command: |
             HUSKY_SKIP_INSTALL=1 npm ci
+            sudo apt-get update
             sudo apt-get install awscli
 
       - save_cache:
@@ -43,6 +44,4 @@ jobs:
           command: | 
             chmod +x scripts/assume_dev.sh
             source scripts/assume_dev.sh
-            npm run sls:package -- -v -s ${CIRCLE_BRANCH,,} --env dev        
-
-      
+            npm run sls:package -- -v -s ${CIRCLE_BRANCH,,} --env dev
