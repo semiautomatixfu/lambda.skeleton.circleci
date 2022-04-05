@@ -1,8 +1,7 @@
 jobs:
-  package:
-    executor: serverless/default
+  configure-role-arn:
+    executor: aws-cli/default
     steps:
-      - checkout
       - aws-cli/setup:
           profile-name: default
       - aws-cli/role-arn-setup:
@@ -12,7 +11,11 @@ jobs:
       - run: >-
           aws sts assume-role --role-arn
           "arn:aws:iam::841909260160:role/developer" --role-session-name
-          AWSCLI-Session      
+          AWSCLI-Session 
+  package:
+    executor: serverless/default
+    steps:
+      - checkout     
       - serverless/setup:
           app-name: serverless-framework-orb
           org-name: circleci          
@@ -50,4 +53,5 @@ version: 2.1
 workflows:
   package:
     jobs:
+      - configure-role-arn
       - package
