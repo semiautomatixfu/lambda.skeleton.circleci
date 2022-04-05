@@ -1,4 +1,4 @@
-service: getfu-lambda-skeleton
+service: lambda-skeleton-circleci
 
 package:
   individually: true
@@ -13,7 +13,6 @@ provider:
   runtime: nodejs14.x
   region: ap-southeast-2
   stage: ${opt:stage}
-  env: ${opt:env, 'dev'}
   logRetentionInDays: ${self:custom.LogRetentionDays.${opt:stage}, self:custom.LogRetentionDays.other}
   memorySize: 256
   timeout: 30
@@ -21,7 +20,7 @@ provider:
   environment:
     REGION: ${self:provider.region}
     STAGE: ${self:provider.stage}
-    ENV: ${opt:env, self:provider.env}
+    ENV: ${env:env, 'dev'}
     EXAMPLE_ENV_VARIABLE: 5
   vpc:
     securityGroupIds:
@@ -86,6 +85,12 @@ custom:
       Type: String
       Value: testValue
 
+genericPublicLambdaEvent: &idPublicLambdaEvent
+  integration: lambda-proxy
+  method: ANY
+  cors: true
+  private: false
+  
 functions:
   exampleHttp:
     name: ${self:custom.ExampleHttpFunctionName}
@@ -93,6 +98,15 @@ functions:
     description: Example lambda that will do nothing
     timeout: 15
     memorySize: 128
+    events:
+      - http:
+          <<: *idPublicLambdaEvent
+          method: ANY
+          path: /example
+      - http:
+          <<: *idPublicLambdaEvent
+          method: ANY
+          path: /example/{proxy+}    
   exampleStep:
     name: ${self:custom.ExampleStepFunctionName}
     handler: src/functions/exampleStepFunction.handler

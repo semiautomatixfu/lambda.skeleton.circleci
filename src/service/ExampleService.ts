@@ -13,5 +13,8 @@ export class ExampleService {
 
   public async httpHandler(state: APIGatewayEvent) {
     // do nothing...
+    return {
+      hello: 'world',
+    };
   }
 }
