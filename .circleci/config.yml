@@ -15,7 +15,7 @@ jobs:
           - v1-dependencies-
       - run:
           name: "What branch am I on now?"
-          command: echo ${CIRCLE_BRANCH,,}
+          command: echo ${CIRCLE_BRANCH,,} # lowercase and string replace ${CIRCLE_BRANCH//-/}
       - run:
           name: Install dependencies
           command: |
@@ -38,6 +38,21 @@ jobs:
           # todo: this should not use npx, perhaps orb is broken?
           command: npx serverless package -v -s ${CIRCLE_BRANCH,,} --env dev
           name: Package
+      - when:
+          condition:
+            equal: [ $CIRCLE_BRANCH, 'main' ]
+          steps: 
+            - run:
+                # todo: this should not use npx, perhaps orb is broken?
+                command: npx serverless deploy -v -s ${CIRCLE_BRANCH,,} --env dev --force
+                name: Package
+  deploy: 
+    executor: serverless/default
+    steps:
+      - run:
+          command: echo 'Deploying to production...'
+          name: Deploy to production
+
 orbs:
   aws-cli: circleci/aws-cli@2.1.0
   serverless: circleci/serverless-framework@1.0.1
@@ -48,3 +63,7 @@ workflows:
       - package:
           context:
             - org-global 
+      - deploy:
+          type: approval
+          requires:
+            - package            
