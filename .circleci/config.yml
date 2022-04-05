@@ -32,7 +32,7 @@ jobs:
           command: JEST_JUNIT_OUTPUT=./jest-test-results.xml CI=true npm test -- --ci --reporters=default --reporters=jest-junit --coverage
           # hudson.plugins.checkstyle.CheckStylePublisher                  
       - run:
-          command: npx serverless package -v -s ${CIRCLE_BRANCH,,} --env dev
+          command: serverless package -v -s $STAGE_NAME --env dev
           name: Package
 orbs:
   aws-cli: circleci/aws-cli@2.1.0
@@ -43,4 +43,6 @@ workflows:
     jobs:
       - package:
           context:
-            - org-global            
+            - org-global 
+          environment:
+            STAGE_NAME: $CIRCLE_BRANCH           
