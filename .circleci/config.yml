@@ -9,9 +9,7 @@ jobs:
           role-arn: 'arn:aws:iam::841909260160:role/developer'
           source-profile: default
       - run: >-
-          aws sts assume-role --role-arn
-          "arn:aws:iam::841909260160:role/developer" --role-session-name
-          AWSCLI-Session 
+          aws sts assume-role --role-arn "arn:aws:iam::841909260160:role/developer" --role-session-name AWSCLI-Session 
   package:
     executor: serverless/default
     steps:
