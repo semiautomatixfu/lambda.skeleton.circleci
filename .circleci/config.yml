@@ -4,12 +4,12 @@ jobs:
     steps:
       - aws-cli/setup:
           profile-name: default
-      - aws-cli/role-arn-setup:
-          profile-name: dev-profile
-          role-arn: 'arn:aws:iam::841909260160:role/developer'
-          source-profile: default
-      - run: >-
-          aws sts assume-role --role-arn "arn:aws:iam::841909260160:role/developer" --role-session-name AWSCLI-Session 
+      # - aws-cli/role-arn-setup:
+      #     profile-name: dev-profile
+      #     role-arn: 'arn:aws:iam::841909260160:role/developer'
+      #     source-profile: default
+      # - run: >-
+      #     aws sts assume-role --role-arn "arn:aws:iam::841909260160:role/developer" --role-session-name AWSCLI-Session 
   package:
     executor: serverless/default
     steps:
