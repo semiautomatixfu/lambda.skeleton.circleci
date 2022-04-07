@@ -59,30 +59,10 @@ jobs:
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: ~/tmp/workspace    
+          at: ~/tmp    
       - run:
           name: Deploy to development  
-          command: npx serverless deploy --package ~/tmp/workspace/artifacts
-    # steps:
-    #   - checkout     
-    #   - aws-cli/setup
-    #   - serverless/setup:
-    #       app-name: serverless-framework-orb
-    #       org-name: circleci          
-    #   # Download and cache dependencies
-    #   - restore_cache:
-    #       keys:
-    #       - v1-dependencies-
-    #       # fallback to using the latest cache if no exact match is found
-    #       - v1-dependencies-
-    #   - run:
-    #       name: Install dependencies
-    #       command: |
-    #         npm i    
-    #   - run:
-    #       # todo: this should not use npx, perhaps orb is broken?
-    #       command: npx serverless deploy -v -s main --env dev --force
-    #       name: Deploy to development
+          command: npx serverless deploy --stage=main --package ~/tmp/artifacts
   prod_deploy: 
     executor: serverless/default
     steps:
