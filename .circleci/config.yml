@@ -8,10 +8,11 @@ jobs:
           app-name: serverless-framework-orb
           org-name: circleci          
       - run:
-          name: Set variables
+          name: "Setup custom environment variables"
           command: |
             STAGE_NAME=${CIRCLE_BRANCH,,} 
             echo $STAGE_NAME
+            echo 'export STAGE_NAME=$STAGE_NAME' >> $BASH_ENV
       - run:
           name: Install dependencies
           command: |
