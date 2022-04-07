@@ -1,6 +1,7 @@
 jobs:
   package:
     executor: serverless/default
+    working_directory: ~/tmp
     steps:
       - checkout     
       - aws-cli/setup
@@ -8,13 +9,24 @@ jobs:
           app-name: serverless-framework-orb
           org-name: circleci          
       - run:
-          name: "What branch am I on now?"
-          command: echo ${CIRCLE_BRANCH,,} # lowercase and string replace ${CIRCLE_BRANCH//-/}
+          name: "Setup custom environment variables"
+          command: |
+            STAGE_NAME=${CIRCLE_BRANCH,,} 
+            STAGE_NAME=${STAGE_NAME//-/}
+            STAGE_NAME=${STAGE_NAME//\//}
+            echo "export STAGE_NAME=$STAGE_NAME" >> $BASH_ENV
+      - restore_cache:
+          name: Restoring node_modules
+          keys:
+          - v1-dependencies-
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-            
       - run:
           name: Install dependencies
           command: |
             HUSKY_SKIP_INSTALL=1 npm ci
       - save_cache:
+          name: Saving node_modules
           paths:
             - node_modules
           key: v1-dependencies-
@@ -29,9 +41,29 @@ jobs:
           # hudson.plugins.checkstyle.CheckStylePublisher                  
       - run:
           # todo: this should not use npx, perhaps orb is broken?
-          command: npx serverless package -v -s ${CIRCLE_BRANCH,,} --env dev
           name: Package
+          command: |
+            env=dev
+            npx serverless package --verbose --stage $STAGE_NAME --env dev --package artifacts/
+      # Persist the specified paths (workspace/echo-output) into the workspace for use in downstream job.
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: ~/tmp
+          # Must be relative path from root
+          paths:
+            - artifacts
   dev_deploy: 
+    executor: serverless/default
+   
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/tmp    
+      - run:
+          name: Deploy to development  
+          command: npx serverless deploy --stage=main --package ~/tmp/artifacts
+  prod_deploy: 
     executor: serverless/default
     steps:
       - checkout     
@@ -48,14 +80,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            npm i    
-      - run:
-          # todo: this should not use npx, perhaps orb is broken?
-          command: npx serverless deploy -v -s ${CIRCLE_BRANCH,,} --env dev --force
-          name: Deploy to development
-  prod_deploy: 
-    executor: serverless/default
-    steps:
+            npm i      
       - run:
           command: echo 'Deploying to production...'
           name: Deploy to production
