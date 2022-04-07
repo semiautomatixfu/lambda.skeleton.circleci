@@ -1,5 +1,6 @@
 jobs:
   package:
+    working_directory: /tmp
     executor: serverless/default
     steps:
       - checkout     
@@ -53,6 +54,7 @@ jobs:
           paths:
             - artifacts
   dev_deploy: 
+    working_directory: /tmp
     executor: serverless/default
     steps:
       - attach_workspace:
@@ -110,11 +112,9 @@ workflows:
   package:
     jobs:
       - package:
-          working_directory: /tmp
           context:
             - org-global 
       - dev_deploy:
-          working_directory: /tmp
           requires:
             - package        
           context:
