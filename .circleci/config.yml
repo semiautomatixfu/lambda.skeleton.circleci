@@ -71,6 +71,9 @@ jobs:
           # Must be absolute path or relative path from working_directory
           at: ~/tmp    
       - run:
+          name: Install dependencies
+          command: npm i          
+      - run:
           name: Deploy to development  
           command: |
             env=dev
