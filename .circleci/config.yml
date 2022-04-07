@@ -64,7 +64,7 @@ jobs:
       - restore_cache:
           name: Restoring node_modules
           keys:
-            - node-v1-{{ .Branch }}-{{ checksum "/package-lock.json" }}
+            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - node-v1-{{ .Branch }}-
             - node-v1-                    
       - attach_workspace:
