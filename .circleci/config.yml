@@ -18,9 +18,9 @@ jobs:
       - restore_cache:
           name: Restoring node_modules
           keys:
-          - v1-dependencies-
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-            
+            - node-v1-{{ .Branch }}-{{ checksum "backend/core/package-lock.json" }}
+            - node-v1-{{ .Branch }}-
+            - node-v1-       
       - run:
           name: Install dependencies
           command: |
@@ -29,7 +29,7 @@ jobs:
           name: Saving node_modules
           paths:
             - node_modules
-          key: v1-dependencies-
+          key: node-v1-{{ .Branch }}-{{ checksum "backend/core/package-lock.json" }}
       # run tests!
       - run: 
           name: Run linting
@@ -64,15 +64,15 @@ jobs:
       - restore_cache:
           name: Restoring node_modules
           keys:
-          - v1-dependencies-
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-                     
+            - node-v1-{{ .Branch }}-{{ checksum "backend/core/package-lock.json" }}
+            - node-v1-{{ .Branch }}-
+            - node-v1-                    
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: ~/tmp    
       - run:
           name: Install dependencies
-          command: npm i          
+          command: npm ci         
       - run:
           name: Deploy to development  
           command: |
