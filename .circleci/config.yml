@@ -55,8 +55,12 @@ jobs:
             - artifacts
   dev_deploy: 
     executor: serverless/default
-   
     steps:
+      - checkout     
+      - aws-cli/setup
+      - serverless/setup:
+          app-name: serverless-framework-orb
+          org-name: circleci       
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: ~/tmp    
