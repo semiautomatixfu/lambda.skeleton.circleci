@@ -18,7 +18,7 @@ jobs:
       - restore_cache:
           name: Restoring node_modules
           keys:
-            - node-v1-{{ .Branch }}-{{ checksum "backend/core/package-lock.json" }}
+            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
             - node-v1-{{ .Branch }}-
             - node-v1-       
       - run:
@@ -29,7 +29,7 @@ jobs:
           name: Saving node_modules
           paths:
             - node_modules
-          key: node-v1-{{ .Branch }}-{{ checksum "backend/core/package-lock.json" }}
+          key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
       # run tests!
       - run: 
           name: Run linting
@@ -64,7 +64,7 @@ jobs:
       - restore_cache:
           name: Restoring node_modules
           keys:
-            - node-v1-{{ .Branch }}-{{ checksum "backend/core/package-lock.json" }}
+            - node-v1-{{ .Branch }}-{{ checksum "/package-lock.json" }}
             - node-v1-{{ .Branch }}-
             - node-v1-                    
       - attach_workspace:
