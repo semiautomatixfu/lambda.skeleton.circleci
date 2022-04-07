@@ -11,7 +11,8 @@ jobs:
           name: "Setup custom environment variables"
           command: |
             STAGE_NAME=${CIRCLE_BRANCH,,} 
-            echo $STAGE_NAME
+            STAGE_NAME=${STAGE_NAME//-/}
+            STAGE_NAME=${STAGE_NAME//\//}
             echo "export STAGE_NAME=$STAGE_NAME" >> $BASH_ENV
       - run:
           name: Install dependencies
@@ -34,9 +35,9 @@ jobs:
           # todo: this should not use npx, perhaps orb is broken?
           name: Package
           command: |
-            echo $STAGE_NAME
-            
-          # npx serverless package -v -s $STAGE_NAME --env dev            
+            echo $STAGE_NAME            
+            env=dev
+            npx serverless package --verbose --stage $STAGE_NAME --env dev            
   dev_deploy: 
     executor: serverless/default
     steps:
