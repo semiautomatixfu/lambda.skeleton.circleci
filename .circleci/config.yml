@@ -66,7 +66,9 @@ jobs:
           at: ~/tmp    
       - run:
           name: Deploy to development  
-          command: npx serverless deploy --stage main --package ~/tmp/artifacts
+          command: |
+            env=dev
+            npx serverless deploy --verbose --stage=main --env dev --package ~/tmp/artifacts
   prod_deploy: 
     executor: serverless/default
     steps:
