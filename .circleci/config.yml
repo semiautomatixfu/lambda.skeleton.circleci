@@ -12,7 +12,7 @@ jobs:
           command: |
             STAGE_NAME=${CIRCLE_BRANCH,,} 
             echo $STAGE_NAME
-            echo 'export STAGE_NAME=$STAGE_NAME' >> $BASH_ENV
+            echo "export STAGE_NAME=$STAGE_NAME" >> $BASH_ENV
       - run:
           name: Install dependencies
           command: |
