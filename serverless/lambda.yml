@@ -2,7 +2,7 @@ Resources:
   IamRoleLambdaExecution: # rename the role given to the lambda. when deploying to dev from a branch then role name is to long without this
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ${self:provider.stage}-${self:service.name}-lambda
+      RoleName: ${self:provider.stage}-${self:service}-lambda
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup

@@ -64,7 +64,7 @@ custom:
 
   VpcId: ${ssm:${self:custom.InfrastructurePath}/vpcId, ssm:${self:custom.InfrastructureFallbackPath}/vpcId}
 
-  StepFunctionNamePrefix: ${self:provider.stage}-${self:service.name}
+  StepFunctionNamePrefix: ${self:provider.stage}-${self:service}
   LamdbaFunctionArnPrefix: 'arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:'
 
   ExampleHttpFunctionName: ${self:custom.StepFunctionNamePrefix}-exampleHttp
@@ -118,7 +118,7 @@ stepFunctions:
   stateMachines:
     exampleStateMachine:
       id: StateMachineExample
-      name: ${self:provider.stage}-${self:service.name}-example
+      name: ${self:provider.stage}-${self:service}-example
       definition:
         Comment: Example
         StartAt: Example
