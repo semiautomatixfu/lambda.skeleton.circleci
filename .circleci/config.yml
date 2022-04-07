@@ -8,8 +8,10 @@ jobs:
           app-name: serverless-framework-orb
           org-name: circleci          
       - run:
-          name: "What branch am I on now?"
-          command: echo ${CIRCLE_BRANCH,,} # lowercase and string replace ${CIRCLE_BRANCH//-/}
+          name: Set variables
+          command: |
+            STAGE_NAME = ${CIRCLE_BRANCH,,} 
+            echo $STAGE_NAME
       - run:
           name: Install dependencies
           command: |
@@ -29,7 +31,7 @@ jobs:
           # hudson.plugins.checkstyle.CheckStylePublisher                  
       - run:
           # todo: this should not use npx, perhaps orb is broken?
-          command: npx serverless package -v -s ${CIRCLE_BRANCH,,} --env dev
+          command: npx serverless package -v -s $STAGE_NAME --env dev
           name: Package
   dev_deploy: 
     executor: serverless/default
@@ -51,7 +53,7 @@ jobs:
             npm i    
       - run:
           # todo: this should not use npx, perhaps orb is broken?
-          command: npx serverless deploy -v -s ${CIRCLE_BRANCH,,} --env dev --force
+          command: npx serverless deploy -v -s main --env dev --force
           name: Deploy to development
   prod_deploy: 
     executor: serverless/default
