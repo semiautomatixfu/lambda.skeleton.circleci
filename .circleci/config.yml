@@ -10,7 +10,7 @@ jobs:
       - run:
           name: Set variables
           command: |
-            STAGE_NAME = ${CIRCLE_BRANCH,,} 
+            STAGE_NAME=${CIRCLE_BRANCH,,} 
             echo $STAGE_NAME
       - run:
           name: Install dependencies
