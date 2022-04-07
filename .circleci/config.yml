@@ -31,8 +31,10 @@ jobs:
           # hudson.plugins.checkstyle.CheckStylePublisher                  
       - run:
           # todo: this should not use npx, perhaps orb is broken?
-          command: npx serverless package -v -s $STAGE_NAME --env dev
           name: Package
+          command: |
+            echo $STAGE_NAME
+            npx serverless package -v -s $STAGE_NAME --env dev            
   dev_deploy: 
     executor: serverless/default
     steps:
