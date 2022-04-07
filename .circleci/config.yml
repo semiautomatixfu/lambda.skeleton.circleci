@@ -34,7 +34,8 @@ jobs:
           name: Package
           command: |
             echo $STAGE_NAME
-            npx serverless package -v -s $STAGE_NAME --env dev            
+            
+          # npx serverless package -v -s $STAGE_NAME --env dev            
   dev_deploy: 
     executor: serverless/default
     steps:
