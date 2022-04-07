@@ -1,7 +1,7 @@
 jobs:
   package:
     executor: serverless/default
-    working_directory: /tmp
+    working_directory: ~/tmp
     steps:
       - checkout     
       - aws-cli/setup
@@ -55,14 +55,14 @@ jobs:
             - artifacts
   dev_deploy: 
     executor: serverless/default
-    working_directory: /tmp    
+    working_directory: ~/tmp    
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
-          at: /tmp/workspace    
+          at: ~/tmp/workspace    
       - run:
           name: Deploy to development  
-          command: npx serverless deploy --package /tmp/workspace/artifacts
+          command: npx serverless deploy --package ~/tmp/workspace/artifacts
     # steps:
     #   - checkout     
     #   - aws-cli/setup
