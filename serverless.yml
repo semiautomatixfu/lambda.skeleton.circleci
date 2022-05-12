@@ -22,7 +22,6 @@ provider:
     STAGE: ${self:provider.stage}
     ENV: ${env:env, 'dev'}
     EXAMPLE_ENV_VARIABLE: 5
-    SSM_PARAM_EXAMPLE: ${self:custom.SSMParameterExample, '6'}
   vpc:
     securityGroupIds:
       - Ref: LambdaSecurityGroup
@@ -78,13 +77,6 @@ custom:
   LogRetentionDays:
     master: 3653
     other: 14
-
-  SSMParameterExample:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: /${self:provider.stage}/services/skeleton/test
-      Type: String
-      Value: testValue
 
 genericPublicLambdaEvent: &idPublicLambdaEvent
   integration: lambda-proxy
