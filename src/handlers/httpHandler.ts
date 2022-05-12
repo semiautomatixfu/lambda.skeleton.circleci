@@ -46,7 +46,7 @@ export function httpHandler<T>(
 
     const log = await Logger.create({ context, event });
     scopedContainer.set('log', log);
-    scopedContainer.set('cognitoIdentity', event.requestContext.identity);
+    scopedContainer.set('cognitoIdentity3', event.requestContext.identity);
 
     // TODO: read client timezone from request
     Settings.defaultZoneName = 'Australia/Brisbane';
