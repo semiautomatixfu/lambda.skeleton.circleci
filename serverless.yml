@@ -22,6 +22,7 @@ provider:
     STAGE: ${self:provider.stage}
     ENV: ${env:env, 'dev'}
     EXAMPLE_ENV_VARIABLE: 5
+    SSM_PARAM_EXAMPLE: ${self:custom.SSMParameterExample, '6'}
   vpc:
     securityGroupIds:
       - Ref: LambdaSecurityGroup

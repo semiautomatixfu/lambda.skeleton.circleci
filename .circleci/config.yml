@@ -53,52 +53,56 @@ jobs:
           # Must be relative path from root
           paths:
             - artifacts
-  dev_deploy: 
-    executor: serverless/default
-    steps:
-      - checkout     
-      - aws-cli/setup
-      - serverless/setup:
-          app-name: serverless-framework-orb
-          org-name: circleci 
-      - restore_cache:
-          name: Restoring node_modules
-          keys:
-            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - node-v1-{{ .Branch }}-
-            - node-v1-                    
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: ~/tmp    
-      - run:
-          name: Install dependencies
-          command: npm ci         
-      - run:
-          name: Deploy to development  
-          command: |
-            env=dev
-            npx serverless deploy --verbose --stage=main --env dev --package ~/tmp/artifacts
-  prod_deploy: 
-    executor: serverless/default
-    steps:
-      - checkout     
-      - aws-cli/setup
-      - serverless/setup:
-          app-name: serverless-framework-orb
-          org-name: circleci          
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-      - run:
-          name: Install dependencies
-          command: |
-            npm i      
-      - run:
-          command: echo 'Deploying to production...'
-          name: Deploy to production
+  # dev_deploy: 
+  #   executor: serverless/default
+  #   steps:
+  #     - checkout     
+  #     - aws-cli/setup
+  #     - serverless/setup:
+  #         app-name: serverless-framework-orb
+  #         org-name: circleci 
+  #     - restore_cache:
+  #         name: Restoring node_modules
+  #         keys:
+  #           - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+  #           - node-v1-{{ .Branch }}-
+  #           - node-v1-                    
+  #     - attach_workspace:
+  #         # Must be absolute path or relative path from working_directory
+  #         at: ~/tmp    
+  #     - run:
+  #         name: Install dependencies
+  #         command: npm ci         
+  #     - run:
+  #         name: Deploy to development  
+  #         # TODO: assume dev role and deploy
+  #         # TODO: Shouldn't have to use npx
+  #         command: |
+  #           env=dev            
+  #           npx serverless deploy --verbose --stage=main --env dev --package ~/tmp/artifacts 
+  # # TODO: optional UAT
+  # prod_deploy: 
+  #   executor: serverless/default
+  #   steps:
+  #     - checkout     
+  #     - aws-cli/setup
+  #     - serverless/setup:
+  #         app-name: serverless-framework-orb
+  #         org-name: circleci          
+  #     # Download and cache dependencies
+  #     - restore_cache:
+  #         keys:
+  #         - v1-dependencies-
+  #         # fallback to using the latest cache if no exact match is found
+  #         - v1-dependencies-
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           npm i      
+  #     - run:
+  #         # TODO: assume build role and deploy
+  #         command: echo 'Deploying to production...'
+  #         name: Deploy to production
 orbs:
   aws-cli: circleci/aws-cli@2.1.0
   serverless: circleci/serverless-framework@1.0.1
@@ -109,18 +113,18 @@ workflows:
       - package:
           context:
             - org-global 
-      - dev_deploy:
-          requires:
-            - package        
-          context:
-            - org-global             
-          filters:
-            branches:
-              only: main
-      - prod_deploy:
-          type: approval
-          requires:
-            - dev_deploy            
-          filters:
-            branches:
-              only: main
+      # - dev_deploy:
+      #     requires:
+      #       - package        
+      #     context:
+      #       - org-global             
+      #     filters:
+      #       branches:
+      #         only: main
+      # - prod_deploy:
+      #     type: approval
+      #     requires:
+      #       - dev_deploy            
+      #     filters:
+      #       branches:
+      #         only: main
